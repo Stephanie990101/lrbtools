@@ -1,0 +1,14 @@
+def largest_continuous_line(num,variable_name):
+    dp = [1 for i in range(len(num))]
+    #print(dp)
+    for i in range(len(num)):
+        for j in range(i+1,len(num)):
+            if num[variable_name][j]-num[variable_name][i] == j-i:
+                dp[i]+=1
+    max_row = np.argmax(dp)#the starting index of the largest continuous line
+    max_len = np.max(dp)#the length of the largest continuous line
+    #print(dp)
+    print('the starting index of the largest continuous line is %s\nthe length of the largest continuous line is %s'%(max_row,max_len))
+    result = num[max_row:max_row+max_len]  #get the largest continuous DataFrame
+    result.reset_index(drop=True,inplace=True)
+    return result
