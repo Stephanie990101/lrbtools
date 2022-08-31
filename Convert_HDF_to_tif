@@ -1,0 +1,33 @@
+#convert HDF to tif
+from osgeo import gdal
+import os
+import glob
+
+open_path = '/Volumes/LRB_DATA/data/0-lrb-C/NDVI/'#The path saved *.hdf
+save_path = '/Users/liuruobing/Documents/Stephanie/data/NDVI-tif/'#The path saved *.tif
+
+def HDF_to_tif(open_path, save_path):
+  #using gdal to open HDF
+  os.chdir(open_path)
+  file_list = glob.glob("*.hdf")
+  for i in file_list:
+      datasets = gdal.Open(i)
+      #To get the sub datasets
+      SubDatasets = datasets.GetSubDatasets()
+      Metadata = datasets.GetMetadata()
+      #To print the metadata
+      for key,value in Metadata.items():
+          print('{key}:{value}'.format(key = key, value = value))
+      #To get the dataset that needed to be converted
+      data = datasets.GetSubDatasets()[0][0] 
+      Raster_DATA = gdal.Open(data)
+      DATA_Array = Raster_DATA.ReadAsArray()
+      print(DATA_Array)
+      #save as *.tif
+      (name,ext) = os.path.splitext(i)
+      save_name = SavePath + name + '.tif'
+      print(save_name)
+      geoData = gdal.Warp(save_name, Raster_DATA,
+                      dstSRS = 'EPSG:4326', format = 'GTiff',
+                      resampleAlg = gdal.GRA_Bilinear)
+      del geoData
